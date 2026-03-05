@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UBS Generator</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 860px; }
+    input, button, select, textarea { width: 100%; margin-top: .5rem; padding: .6rem; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    pre { background: #111; color: #0f0; padding: 1rem; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>UBS — PWA Generator</h1>
+  <p>Paste a target URL, analyze it, and generate a recipe + manifest + service worker.</p>
+
+  <label>Target URL</label>
+  <input id="targetUrl" placeholder="https://discord.com" />
+
+  <div class="row">
+    <div>
+      <label>Region preference</label>
+      <select id="region">
+        <option value="us-east1">us-east1</option>
+        <option value="europe-west1">europe-west1</option>
+        <option value="asia-east1">asia-east1</option>
+      </select>
+    </div>
+    <div>
+      <label>Apps Script endpoint</label>
+      <input id="appsScriptUrl" placeholder="https://script.google.com/.../exec" />
+    </div>
+  </div>
+
+  <button id="analyzeBtn">Analyze</button>
+  <button id="genBtn">Generate PWA Files</button>
+
+  <h3>Analysis</h3>
+  <pre id="analysis">(none)</pre>
+
+  <h3>Generated recipe.json</h3>
+  <pre id="recipeOut">(none)</pre>
+
+  <script type="module" src="../src/App.js"></script>
+</body>
+</html>
