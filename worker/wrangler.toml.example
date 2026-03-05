@@ -1,0 +1,12 @@
+name = "ubs-router"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+[[kv_namespaces]]
+binding = "UBS_KV"
+id = "replace-with-kv-namespace-id"
+
+[vars]
+RECIPE_REGISTRY_BASE = "https://raw.githubusercontent.com/your-org/universal-basic-shell/main/recipes"
+APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec"
+CLOUD_RUN_SIGNAL_URL = "https://your-signal-server-xyz.run.app"

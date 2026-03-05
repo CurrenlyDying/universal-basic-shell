@@ -1,0 +1,13 @@
+{
+  "id": "gmail",
+  "name": "Gmail",
+  "url": "https://mail.google.com",
+  "tier": 1,
+  "preferredRegions": ["us-east1", "europe-west1"],
+  "usesWebSockets": true,
+  "wsEndpoints": ["mail.google.com"],
+  "sessionVault": true,
+  "pushRelay": true,
+  "fingerprintProfile": "desktop-chrome-win10",
+  "notes": "Prefer Tier 1 for full SPA compatibility."
+}
