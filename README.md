@@ -2,40 +2,54 @@
 
 UBS is a privacy routing system that keeps a stable Cloudflare Worker front door while switching execution tiers behind it.
 
-## GitHub Pages Command Center
+## GitHub Pages portal
 
-The repo root (`index.html`) is now a full **command center** page for UBS.
+This repository now works as a navigable GitHub Pages site from the repo root (`index.html`).
 
-From one page, you can:
-- configure all required deployment settings,
-- view generated config snippets,
-- follow in-page step-by-step setup instructions,
-- run live health/assignment checks,
-- use the embedded PWA Generator and Universal PWA shell,
-- inspect recipe examples.
+### What you can do on the site
 
-## Start here
+- Understand architecture and setup in one place.
+- Use the embedded **PWA Generator** (`generator/public/index.html`).
+- Use the embedded **Universal PWA Shell** (`pwa/public/index.html`).
+- Run operator checks against your Cloud Run signaling server (`/health`, `/signal/nodes`).
+- Trigger Tier 1 session start through your Cloudflare Worker.
+- Load and inspect local recipe examples.
 
-1. Open the command center page (`index.html`) locally or through GitHub Pages.
-2. Go to **Command Center** tab and enter:
-   - Apps Script URL
-   - Cloud Run signal URL
-   - Cloudflare Worker URL
-   - recipe base + preferred region
-3. Save config and copy generated snippets.
-4. Follow **Setup Guide** tab to deploy Apps Script, Cloud Run, Worker, and Colab worker node.
-5. Use **Live Checks** tab to validate `/health`, `/signal/nodes`, and Tier 1 assignment.
+To enable GitHub Pages, set Pages source to this branch/root and open the published URL.
 
-## Deep docs
+## Architecture (updated)
 
-- Full step-by-step markdown: `docs/setup-from-zero.md`
-- User usage guide: `docs/user-guide.md`
-- Tier 1 focused tutorial: `docs/tutorial-cloudrun-colab.md`
+- **Tier 0**: Apps Script proxy (Google infra fetch)
+- **Tier 1**:
+  - **Cloud Run = signaling server (operator)**
+  - **Cloud Shell/Colab = browser worker node (browser runtime)**
+- **Tier 2**: WireGuard/Headscale mesh
+- **Tier 3**: Volunteer residential peers
+
+## Why this shift matters
+
+Cloud Run stays stateless and instant (session handshake + routing only), while browser state and heavy execution live in disposable worker runtimes that connect outward to the signal server.
+
+## Quick start
+
+1. Deploy Apps Script from `apps-script/`.
+2. Deploy Cloud Run signaling server from `container/`.
+3. Configure and deploy Cloudflare Worker from `worker/`.
+4. Start a worker node with `colab/default.ipynb` (or Cloud Shell equivalent).
+5. Open repo-root `index.html` (or GitHub Pages URL) to use all user/operator flows.
+
+## User docs
+
+- User instructions: `docs/user-guide.md`
+- Operator tutorial: `docs/tutorial-cloudrun-colab.md`
 - Build handoff: `HANDOFF.md`
 
-## Architecture
+## Worker routing behavior
 
-- **Tier 0**: Apps Script proxy
-- **Tier 1**: Cloud Run signaling + Colab/Cloud Shell browser worker
-- **Tier 2**: Headscale/WireGuard
-- **Tier 3**: Volunteer residential nodes
+- `?tier=0` -> Apps Script proxy.
+- `?tier=1` -> Cloud Run signal `/session/start`.
+- `?recipe=` loads recipe from registry and selects default tier.
+
+## Current status
+
+This repo is a practical scaffold. It includes the architecture-shifted control plane and tutorials, ready for hardening (auth, durable signaling state, websocket streaming, and vault persistence).

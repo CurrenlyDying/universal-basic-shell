@@ -1,8 +1,6 @@
 const tabs = document.querySelectorAll('.tabs button');
 const panels = document.querySelectorAll('.panel');
 
-const STORAGE_KEY = 'ubs-command-center-config';
-
 tabs.forEach((btn) => {
   btn.addEventListener('click', () => {
     tabs.forEach((b) => b.classList.remove('active'));
@@ -12,96 +10,8 @@ tabs.forEach((btn) => {
   });
 });
 
-function byId(id) {
-  return document.getElementById(id);
-}
-
-function sanitizeUrl(value) {
-  return (value || '').trim().replace(/\/$/, '');
-}
-
-function getConfigFromInputs() {
-  return {
-    appsScriptUrl: sanitizeUrl(byId('cfgAppsScriptUrl')?.value),
-    signalUrl: sanitizeUrl(byId('cfgSignalUrl')?.value),
-    workerUrl: sanitizeUrl(byId('cfgWorkerUrl')?.value),
-    recipeBase: sanitizeUrl(byId('cfgRecipeBase')?.value),
-    region: byId('cfgRegion')?.value || 'us-east1',
-  };
-}
-
-function setConfigToInputs(cfg) {
-  if (!cfg) return;
-  if (byId('cfgAppsScriptUrl')) byId('cfgAppsScriptUrl').value = cfg.appsScriptUrl || '';
-  if (byId('cfgSignalUrl')) byId('cfgSignalUrl').value = cfg.signalUrl || '';
-  if (byId('cfgWorkerUrl')) byId('cfgWorkerUrl').value = cfg.workerUrl || '';
-  if (byId('cfgRecipeBase')) byId('cfgRecipeBase').value = cfg.recipeBase || '';
-  if (byId('cfgRegion')) byId('cfgRegion').value = cfg.region || 'us-east1';
-
-  if (byId('signalUrl')) byId('signalUrl').value = cfg.signalUrl || '';
-  if (byId('workerUrl')) byId('workerUrl').value = cfg.workerUrl || '';
-}
-
-function renderSnippets(cfg) {
-  const wrangler = `name = "ubs-router"
-main = "index.js"
-compatibility_date = "2024-12-01"
-
-[[kv_namespaces]]
-binding = "UBS_KV"
-id = "replace-with-kv-namespace-id"
-
-[vars]
-RECIPE_REGISTRY_BASE = "${cfg.recipeBase || 'https://raw.githubusercontent.com/your-org/universal-basic-shell/main/recipes'}"
-APPS_SCRIPT_URL = "${cfg.appsScriptUrl || 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'}"
-CLOUD_RUN_SIGNAL_URL = "${cfg.signalUrl || 'https://your-signal-server-xyz.run.app'}"`;
-
-  const tier1 = `${cfg.workerUrl || 'https://your-worker.workers.dev'}?tier=1&region=${cfg.region || 'us-east1'}&q=${encodeURIComponent('https://discord.com')}`;
-
-  const colab = `UBS_SIGNAL_URL=${cfg.signalUrl || 'https://your-signal-server-xyz.run.app'}\nUBS_REGION=${cfg.region || 'us-east1'}`;
-
-  byId('wranglerSnippet').textContent = wrangler;
-  byId('tier1Snippet').textContent = tier1;
-  byId('colabSnippet').textContent = colab;
-}
-
-function saveConfig() {
-  const cfg = getConfigFromInputs();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
-  setConfigToInputs(cfg);
-  renderSnippets(cfg);
-  byId('configStatus').textContent = `Saved config at ${new Date().toISOString()}`;
-}
-
-function loadConfig() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    byId('configStatus').textContent = 'No saved config found.';
-    renderSnippets(getConfigFromInputs());
-    return;
-  }
-
-  const cfg = JSON.parse(raw);
-  setConfigToInputs(cfg);
-  renderSnippets(cfg);
-  byId('configStatus').textContent = `Loaded config from local storage.`;
-}
-
-function clearConfig() {
-  localStorage.removeItem(STORAGE_KEY);
-  setConfigToInputs({
-    appsScriptUrl: '',
-    signalUrl: '',
-    workerUrl: '',
-    recipeBase: 'https://raw.githubusercontent.com/your-org/universal-basic-shell/main/recipes',
-    region: 'us-east1',
-  });
-  renderSnippets(getConfigFromInputs());
-  byId('configStatus').textContent = 'Cleared saved config.';
-}
-
-async function getJson(url, init) {
-  const res = await fetch(url, init);
+async function getJson(url) {
+  const res = await fetch(url);
   const text = await res.text();
   try {
     return JSON.parse(text);
@@ -110,36 +20,32 @@ async function getJson(url, init) {
   }
 }
 
-byId('saveConfigBtn').addEventListener('click', saveConfig);
-byId('loadConfigBtn').addEventListener('click', loadConfig);
-byId('clearConfigBtn').addEventListener('click', clearConfig);
-
-byId('healthBtn').addEventListener('click', async () => {
-  const signalUrl = sanitizeUrl(byId('signalUrl').value);
-  const out = byId('signalOut');
+document.getElementById('healthBtn').addEventListener('click', async () => {
+  const signalUrl = document.getElementById('signalUrl').value.trim().replace(/\/$/, '');
+  const out = document.getElementById('signalOut');
   if (!signalUrl) return (out.textContent = 'Please provide Cloud Run signal URL');
   out.textContent = JSON.stringify(await getJson(`${signalUrl}/health`), null, 2);
 });
 
-byId('nodesBtn').addEventListener('click', async () => {
-  const signalUrl = sanitizeUrl(byId('signalUrl').value);
-  const out = byId('signalOut');
+document.getElementById('nodesBtn').addEventListener('click', async () => {
+  const signalUrl = document.getElementById('signalUrl').value.trim().replace(/\/$/, '');
+  const out = document.getElementById('signalOut');
   if (!signalUrl) return (out.textContent = 'Please provide Cloud Run signal URL');
   out.textContent = JSON.stringify(await getJson(`${signalUrl}/signal/nodes`), null, 2);
 });
 
-byId('startSessionBtn').addEventListener('click', async () => {
-  const workerUrl = sanitizeUrl(byId('workerUrl').value);
-  const targetUrl = byId('targetUrl').value.trim();
-  const out = byId('workerOut');
+document.getElementById('startSessionBtn').addEventListener('click', async () => {
+  const workerUrl = document.getElementById('workerUrl').value.trim().replace(/\/$/, '');
+  const targetUrl = document.getElementById('targetUrl').value.trim();
+  const out = document.getElementById('workerOut');
   if (!workerUrl || !targetUrl) return (out.textContent = 'Provide worker URL and target URL');
 
   const route = `${workerUrl}?tier=1&q=${encodeURIComponent(targetUrl)}`;
   out.textContent = JSON.stringify(await getJson(route), null, 2);
 });
 
-byId('loadRecipesBtn').addEventListener('click', async () => {
-  const out = byId('recipesOut');
+document.getElementById('loadRecipesBtn').addEventListener('click', async () => {
+  const out = document.getElementById('recipesOut');
   const files = [
     'recipes/discord/recipe.json',
     'recipes/gmail/recipe.json',
@@ -153,5 +59,3 @@ byId('loadRecipesBtn').addEventListener('click', async () => {
 
   out.textContent = JSON.stringify(loaded, null, 2);
 });
-
-loadConfig();
