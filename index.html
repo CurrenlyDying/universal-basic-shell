@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UBS GitHub Pages Portal</title>
+  <link rel="stylesheet" href="site/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>UBS — Universal Basic Shell</h1>
+    <p>GitHub Pages control center for routing, generator, and PWA workflows.</p>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="overview" class="active">Overview</button>
+    <button data-tab="quickstart">Quick Start</button>
+    <button data-tab="generator">PWA Generator</button>
+    <button data-tab="pwa">Universal PWA Shell</button>
+    <button data-tab="ops">Operator Tools</button>
+    <button data-tab="recipes">Recipe Registry</button>
+  </nav>
+
+  <main>
+    <section id="overview" class="panel active">
+      <h2>Architecture</h2>
+      <ul>
+        <li><strong>Tier 0:</strong> Apps Script proxy via Google infrastructure.</li>
+        <li><strong>Tier 1:</strong> Cloud Run signaling + Colab/Cloud Shell worker browser node.</li>
+        <li><strong>Tier 2:</strong> Headscale/WireGuard mesh.</li>
+        <li><strong>Tier 3:</strong> Volunteer residential relay nodes.</li>
+      </ul>
+      <p>
+        Use this portal to navigate every core UBS flow from one place on GitHub Pages.
+      </p>
+    </section>
+
+    <section id="quickstart" class="panel">
+      <h2>Step-by-step user flow</h2>
+      <ol>
+        <li>Open the <strong>PWA Generator</strong> tab and analyze your target service.</li>
+        <li>Generate recipe + manifest + service worker artifacts.</li>
+        <li>Open the <strong>Universal PWA Shell</strong> tab to route browsing traffic through UBS.</li>
+        <li>Use <strong>Operator Tools</strong> to verify signaling server and worker node availability.</li>
+      </ol>
+      <p>Full docs: <a href="docs/user-guide.md">User Guide</a> · <a href="docs/tutorial-cloudrun-colab.md">Cloud Run + Colab Tutorial</a>.</p>
+    </section>
+
+    <section id="generator" class="panel">
+      <h2>PWA Generator</h2>
+      <p>Embedded generator app:</p>
+      <iframe title="UBS Generator" src="generator/public/index.html"></iframe>
+    </section>
+
+    <section id="pwa" class="panel">
+      <h2>Universal PWA Shell</h2>
+      <p>Embedded universal shell:</p>
+      <iframe title="UBS Universal Shell" src="pwa/public/index.html"></iframe>
+    </section>
+
+    <section id="ops" class="panel">
+      <h2>Operator tools</h2>
+      <div class="grid">
+        <div>
+          <label>Cloud Run signal URL</label>
+          <input id="signalUrl" placeholder="https://your-signal-server.run.app" />
+          <button id="healthBtn">Check /health</button>
+          <button id="nodesBtn">Check /signal/nodes</button>
+          <pre id="signalOut">No check run yet.</pre>
+        </div>
+        <div>
+          <label>Cloudflare Worker URL</label>
+          <input id="workerUrl" placeholder="https://your-worker.workers.dev" />
+          <label>Target URL</label>
+          <input id="targetUrl" value="https://discord.com" />
+          <button id="startSessionBtn">Start Tier 1 Session</button>
+          <pre id="workerOut">No session request yet.</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="recipes" class="panel">
+      <h2>Recipe Registry</h2>
+      <button id="loadRecipesBtn">Load local recipes</button>
+      <pre id="recipesOut">Click to load recipe examples from this repo.</pre>
+    </section>
+  </main>
+
+  <footer>
+    <small>UBS GitHub Pages portal · Static, portable, no build required.</small>
+  </footer>
+
+  <script type="module" src="site/app.js"></script>
+</body>
+</html>

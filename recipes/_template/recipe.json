@@ -1,0 +1,13 @@
+{
+  "id": "example-service",
+  "name": "Example Service",
+  "url": "https://example.com",
+  "tier": 0,
+  "preferredRegions": ["us-east1"],
+  "usesWebSockets": false,
+  "wsEndpoints": [],
+  "sessionVault": false,
+  "pushRelay": false,
+  "fingerprintProfile": "desktop-chrome-win10",
+  "notes": "Template recipe."
+}

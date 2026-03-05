@@ -1,0 +1,13 @@
+{
+  "id": "banking-generic",
+  "name": "Generic Banking",
+  "url": "https://example-bank.com",
+  "tier": 1,
+  "preferredRegions": ["us-east1"],
+  "usesWebSockets": false,
+  "wsEndpoints": [],
+  "sessionVault": true,
+  "pushRelay": false,
+  "fingerprintProfile": "desktop-chrome-win10",
+  "notes": "Conservative Tier 1 default for anti-fraud flows."
+}
