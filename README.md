@@ -2,6 +2,21 @@
 
 UBS is a privacy routing system that keeps a stable Cloudflare Worker front door while switching execution tiers behind it.
 
+## GitHub Pages portal
+
+This repository now works as a navigable GitHub Pages site from the repo root (`index.html`).
+
+### What you can do on the site
+
+- Understand architecture and setup in one place.
+- Use the embedded **PWA Generator** (`generator/public/index.html`).
+- Use the embedded **Universal PWA Shell** (`pwa/public/index.html`).
+- Run operator checks against your Cloud Run signaling server (`/health`, `/signal/nodes`).
+- Trigger Tier 1 session start through your Cloudflare Worker.
+- Load and inspect local recipe examples.
+
+To enable GitHub Pages, set Pages source to this branch/root and open the published URL.
+
 ## Architecture (updated)
 
 - **Tier 0**: Apps Script proxy (Google infra fetch)
@@ -21,7 +36,7 @@ Cloud Run stays stateless and instant (session handshake + routing only), while 
 2. Deploy Cloud Run signaling server from `container/`.
 3. Configure and deploy Cloudflare Worker from `worker/`.
 4. Start a worker node with `colab/default.ipynb` (or Cloud Shell equivalent).
-5. Use `generator/public/index.html` to create route configs.
+5. Open repo-root `index.html` (or GitHub Pages URL) to use all user/operator flows.
 
 ## User docs
 
