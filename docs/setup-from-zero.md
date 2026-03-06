@@ -54,22 +54,7 @@ The signaling server is in `container/` and exposes:
 - `GET /signal/nodes`
 - `POST /session/start`
 
-### 2.1 **Cloud Shell-safe steps (recommended)**
-
-> If you run `gcloud run deploy --source ./container` from the wrong folder, you get:
-> `ERROR: (gcloud.run.deploy) could not find source [./container]`.
-
-Run these exact commands in Cloud Shell:
-
-```bash
-git clone https://github.com/<YOUR_ORG>/universal-basic-shell.git
-cd universal-basic-shell
-pwd
-ls
-ls container
-```
-
-Now deploy from repo root:
+### 2.1 Build and deploy (gcloud CLI)
 
 ```bash
 gcloud auth login
@@ -80,22 +65,7 @@ gcloud run deploy ubs-signal \
   --allow-unauthenticated
 ```
 
-### 2.2 If repo folder name is different
-If you downloaded zip or used a different directory name, `cd` into the folder that actually contains `container/` first.
-
-Quick check:
-
-```bash
-find . -maxdepth 2 -type d -name container
-```
-
-Then deploy using that discovered path, for example:
-
-```bash
-gcloud run deploy ubs-signal --source /home/<you>/my-folder/container --region us-central1 --allow-unauthenticated
-```
-
-### 2.3 Save deployed URL
+### 2.2 Save deployed URL
 After deploy, copy service URL (example: `https://ubs-signal-abc-uc.a.run.app`).
 
 This is your `CLOUD_RUN_SIGNAL_URL`.
@@ -164,8 +134,7 @@ The repo root `index.html` is your single control center.
 ### 5.2 Use portal tabs
 - **PWA Generator**: analyze and generate artifacts
 - **Universal PWA Shell**: test route behavior
-- **Command Center**: save URLs + generate config snippets
-- **Live Checks**:
+- **Operator Tools**:
   - set Cloud Run signal URL, run `/health` and `/signal/nodes`
   - set Worker URL and start Tier 1 session
 - **Recipe Registry**: inspect sample recipes
@@ -189,7 +158,6 @@ The repo root `index.html` is your single control center.
 ## 7) Common issues
 
 - **403 from Apps Script**: ensure deployment is `Anyone` and latest version deployed.
-- **could not find source [./container]**: you are not in repo root. Run `pwd`, `ls`, then `cd` into folder containing `container/`.
 - **Worker can’t reach signal URL**: verify `CLOUD_RUN_SIGNAL_URL` variable in worker config.
 - **No active nodes**: rerun Colab notebook and verify heartbeats.
 - **CORS/browser limitations** in portal checks: confirm endpoints allow cross-origin usage for your testing setup.
