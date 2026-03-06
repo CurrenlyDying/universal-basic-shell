@@ -1,0 +1,13 @@
+{
+  "id": "discord",
+  "name": "Discord",
+  "url": "https://discord.com",
+  "tier": 1,
+  "preferredRegions": ["europe-west1", "us-east1"],
+  "usesWebSockets": true,
+  "wsEndpoints": ["gateway.discord.gg"],
+  "sessionVault": true,
+  "pushRelay": true,
+  "fingerprintProfile": "desktop-chrome-win10",
+  "notes": "Works in Tier 1 streaming mode."
+}

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UBS Command Center</title>
+  <link rel="stylesheet" href="site/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>UBS — Universal Basic Shell Command Center</h1>
+    <p>Single-page control panel for setup, configuration, routing tests, generator, and operations.</p>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="overview" class="active">Overview</button>
+    <button data-tab="command">Command Center</button>
+    <button data-tab="setup">Setup Guide</button>
+    <button data-tab="generator">PWA Generator</button>
+    <button data-tab="pwa">Universal PWA Shell</button>
+    <button data-tab="ops">Live Checks</button>
+    <button data-tab="recipes">Recipes</button>
+  </nav>
+
+  <main>
+    <section id="overview" class="panel active">
+      <h2>UBS architecture</h2>
+      <ul>
+        <li><strong>Tier 0:</strong> Apps Script proxy running from Google infra.</li>
+        <li><strong>Tier 1:</strong> Cloud Run signaling server + Colab/Cloud Shell browser worker node.</li>
+        <li><strong>Tier 2:</strong> Headscale/WireGuard device tunnel.</li>
+        <li><strong>Tier 3:</strong> Volunteer residential nodes.</li>
+      </ul>
+      <p>This page is designed to be your center of command: configure once, then run all checks and workflows.</p>
+    </section>
+
+    <section id="command" class="panel">
+      <h2>Center of command: configuration</h2>
+      <p>Save your deployment settings once. Values are stored in your browser local storage.</p>
+
+      <div class="grid">
+        <div>
+          <label>Apps Script URL (APPS_SCRIPT_URL)</label>
+          <input id="cfgAppsScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" />
+
+          <label>Cloud Run Signal URL (CLOUD_RUN_SIGNAL_URL)</label>
+          <input id="cfgSignalUrl" placeholder="https://ubs-signal-xyz.run.app" />
+
+          <label>Cloudflare Worker URL</label>
+          <input id="cfgWorkerUrl" placeholder="https://ubs-router.your-subdomain.workers.dev" />
+
+          <label>Recipe Registry Base</label>
+          <input id="cfgRecipeBase" value="https://raw.githubusercontent.com/your-org/universal-basic-shell/main/recipes" />
+
+          <label>Preferred Region</label>
+          <select id="cfgRegion">
+            <option value="us-east1">us-east1</option>
+            <option value="us-central1">us-central1</option>
+            <option value="europe-west1">europe-west1</option>
+            <option value="asia-east1">asia-east1</option>
+          </select>
+
+          <div class="rowBtns">
+            <button id="saveConfigBtn">Save config</button>
+            <button id="loadConfigBtn">Reload config</button>
+            <button id="clearConfigBtn">Clear config</button>
+          </div>
+          <pre id="configStatus">No config action yet.</pre>
+        </div>
+
+        <div>
+          <h3>Generated snippets</h3>
+          <p>Use these snippets directly when configuring infrastructure.</p>
+
+          <label>wrangler.toml (example output)</label>
+          <pre id="wranglerSnippet">Save config to generate.</pre>
+
+          <label>Worker test URL (Tier 1)</label>
+          <pre id="tier1Snippet">Save config to generate.</pre>
+
+          <label>Colab env values</label>
+          <pre id="colabSnippet">Save config to generate.</pre>
+          <label>Cloud Shell deploy commands</label>
+          <pre id="cloudShellSnippet">Save config to generate.</pre>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="setup" class="panel">
+      <h2>Step-by-step setup (in-page)</h2>
+      <ol>
+        <li><strong>Create Apps Script URL:</strong> paste `apps-script/proxy.gs` + `apps-script/gemini.gs` into script.google.com, set `GEMINI_KEY`, deploy Web App as <em>Execute as Me</em> and <em>Anyone</em>, then copy URL into Command Center.</li>
+        <li><strong>Deploy Cloud Run signaling:</strong> in Cloud Shell, clone repo and <code>cd</code> to repo root before running <code>gcloud run deploy --source ./container ...</code> (fixes <code>could not find source [./container]</code>), verify <code>/health</code>, then paste URL into Command Center.</li>
+        <li><strong>Deploy Cloudflare Worker:</strong> create KV namespace, copy `worker/wrangler.toml.example` to `worker/wrangler.toml`, fill values from Command Center snippet, deploy with Wrangler.</li>
+        <li><strong>Start Colab worker node:</strong> open `colab/default.ipynb`, set `UBS_SIGNAL_URL` from Command Center, run all cells, verify register + heartbeat logs.</li>
+        <li><strong>Run live checks:</strong> use the Live Checks tab to verify signal health, active nodes, and Tier 1 assignment.</li>
+      </ol>
+      <p>Detailed markdown docs still available: <a href="docs/setup-from-zero.md">Setup From Zero</a> · <a href="docs/tutorial-cloudrun-colab.md">Cloud Run + Colab</a> · <a href="docs/user-guide.md">User Guide</a>.</p>
+    </section>
+
+    <section id="generator" class="panel">
+      <h2>PWA Generator</h2>
+      <p>Embedded generator app:</p>
+      <iframe title="UBS Generator" src="generator/public/index.html"></iframe>
+    </section>
+
+    <section id="pwa" class="panel">
+      <h2>Universal PWA Shell</h2>
+      <p>Embedded shell app:</p>
+      <iframe title="UBS Universal Shell" src="pwa/public/index.html"></iframe>
+    </section>
+
+    <section id="ops" class="panel">
+      <h2>Live checks</h2>
+      <div class="grid">
+        <div>
+          <label>Cloud Run signal URL</label>
+          <input id="signalUrl" placeholder="https://your-signal-server.run.app" />
+          <button id="healthBtn">Check /health</button>
+          <button id="nodesBtn">Check /signal/nodes</button>
+          <pre id="signalOut">No check run yet.</pre>
+        </div>
+        <div>
+          <label>Cloudflare Worker URL</label>
+          <input id="workerUrl" placeholder="https://your-worker.workers.dev" />
+          <label>Target URL</label>
+          <input id="targetUrl" value="https://discord.com" />
+          <button id="startSessionBtn">Start Tier 1 Session</button>
+          <pre id="workerOut">No session request yet.</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="recipes" class="panel">
+      <h2>Recipe registry quick view</h2>
+      <button id="loadRecipesBtn">Load local recipes</button>
+      <pre id="recipesOut">Click to load recipe examples from this repo.</pre>
+    </section>
+  </main>
+
+  <footer>
+    <small>UBS Command Center · GitHub Pages static app · No build required.</small>
+  </footer>
+
+  <script type="module" src="site/app.js"></script>
+</body>
+</html>

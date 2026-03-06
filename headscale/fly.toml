@@ -1,0 +1,13 @@
+app = "ubs-headscale"
+primary_region = "iad"
+
+[build]
+  image = "headscale/headscale:latest"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
